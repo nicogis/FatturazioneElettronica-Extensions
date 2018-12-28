@@ -1,7 +1,7 @@
 ﻿## Utilities per Fatturazione elettronica verso la Pubblica Amministrazione/privati e conservazione sostituitiva delle fatture
 
 ### Descrizione
-La libreria è stata sviluppata in c# e contiene funzionalità di ausilio alla fatturazione elettronica e alla conservazione sostitutiva delle stesse
+La libreria è stata sviluppata in c# e contiene funzionalità di ausilio alla fatturazione elettronica e alla conservazione sostitutiva delle fatture elettroniche
 
 Attualmente sono presenti i seguenti metodi:
 
@@ -22,7 +22,7 @@ Attualmente sono presenti i seguenti metodi:
     }
 ```
 
-- *VerificaEstraiFirma* verifica una fattura firmata ed estrarre il file xml
+- *VerificaEstraiFirma* verifica una fattura firmata ed estrae il file xml
 ```csharp
           if (Utilities.VerificaEstraiFirma(@"c:\temp\IT01234567890_FPA01.xml.p7m", out pathFile, ref lastError))
           {
