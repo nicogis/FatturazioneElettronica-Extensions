@@ -411,7 +411,7 @@
         /// <param name="lastError">ultimo errore della funzionalità</param>
         /// <param name="signed">indicare se si tratta di un file firmato</param>
         /// <returns>true se è formalmente corretto il nome del file della fattura</returns>
-        private static bool IsValidNomeFileFattura(string fileName, ref string lastError, bool signed = true)
+        public static bool IsValidNomeFileFattura(string fileName, ref string lastError, bool signed = true)
         {
             string s = string.Empty;
             if (signed)

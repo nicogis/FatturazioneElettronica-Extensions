@@ -34,7 +34,6 @@
   <ItemGroup>
     <Reference Include="ChilkatDotNet46, Version=9.5.0.75, Culture=neutral, PublicKeyToken=eb5fc1fc52ef09bd, processorArchitecture=AMD64">
       <HintPath>packages\chilkat-x64.9.5.0.75\lib\net462\ChilkatDotNet46.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -52,22 +51,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="packages\chilkat-x64.9.5.0.75\.signature.p7s" />
-    <None Include="packages\chilkat-x64.9.5.0.75\chilkat-x64.9.5.0.75.nupkg" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="packages\chilkat-x64.9.5.0.75\lib\net20\ChilkatDotNet2.dll" />
-    <Content Include="packages\chilkat-x64.9.5.0.75\lib\net35\ChilkatDotNet2.dll" />
-    <Content Include="packages\chilkat-x64.9.5.0.75\lib\net403\ChilkatDotNet4.dll" />
-    <Content Include="packages\chilkat-x64.9.5.0.75\lib\net40\ChilkatDotNet4.dll" />
-    <Content Include="packages\chilkat-x64.9.5.0.75\lib\net451\ChilkatDotNet45.dll" />
-    <Content Include="packages\chilkat-x64.9.5.0.75\lib\net452\ChilkatDotNet45.dll" />
-    <Content Include="packages\chilkat-x64.9.5.0.75\lib\net45\ChilkatDotNet45.dll" />
-    <Content Include="packages\chilkat-x64.9.5.0.75\lib\net461\ChilkatDotNet46.dll" />
-    <Content Include="packages\chilkat-x64.9.5.0.75\lib\net462\ChilkatDotNet46.dll" />
-    <Content Include="packages\chilkat-x64.9.5.0.75\lib\net46\ChilkatDotNet46.dll" />
-    <Content Include="packages\chilkat-x64.9.5.0.75\lib\net471\ChilkatDotNet47.dll" />
-    <Content Include="packages\chilkat-x64.9.5.0.75\lib\net47\ChilkatDotNet47.dll" />
+    <None Include="ReadMe.md" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

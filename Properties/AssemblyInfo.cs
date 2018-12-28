@@ -4,11 +4,11 @@ using System.Runtime.InteropServices;
 // Le informazioni generali relative a un assembly sono controllate dal seguente 
 // set di attributi. Modificare i valori di questi attributi per modificare le informazioni
 // associate a un assembly.
-[assembly: AssemblyTitle("FatturazioneElettronica.Extensions")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("Fatturazione Elettronica Extensions")]
+[assembly: AssemblyDescription("Fatturazione Elettronica Extensions")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Studio A&T s.r.l.")]
-[assembly: AssemblyProduct("FatturazioneElettronica.Extensions")]
+[assembly: AssemblyProduct("FatturazioneElettronicaExtensions")]
 [assembly: AssemblyCopyright("Copyright © 2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
