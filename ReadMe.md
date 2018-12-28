@@ -68,8 +68,8 @@ Attualmente sono presenti i seguenti metodi:
 
 ### Requisiti
 
-E' richiesto il framework Microsoft .NET 4.6.2
-Licenza libreria Chilkat (https://www.chilkatsoft.com) 
+- E' richiesto il framework Microsoft .NET 4.6.2
+- Licenza d'uso della libreria Chilkat (per dettagli visitare il sito https://www.chilkatsoft.com) 
 
 ### Installazione
 ```
