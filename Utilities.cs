@@ -1,8 +1,10 @@
 ﻿namespace FatturazioneElettronica.Extensions
 {
     using System;
+    using System.Globalization;
     using System.IO;
     using System.Text.RegularExpressions;
+    using System.Linq;
 
     /// <summary>
     /// utilities per la fatturazione elettronica e la conservazione sostitutiva
@@ -67,7 +69,7 @@
             {
                 string fileName = Path.GetFileName(pathFile);
 
-                if (!Utilities.IsValidNomeFileFattura(fileName, ref lastError, false))
+                if (!Utilities.IsValidNomeFileFattura(fileName, ref lastError))
                 {
                     return success;
                 }
@@ -409,24 +411,109 @@
         /// </summary>
         /// <param name="fileName">nome del file</param>
         /// <param name="lastError">ultimo errore della funzionalità</param>
-        /// <param name="signed">indicare se si tratta di un file firmato</param>
         /// <returns>true se è formalmente corretto il nome del file della fattura</returns>
-        public static bool IsValidNomeFileFattura(string fileName, ref string lastError, bool signed = true)
+        public static bool IsValidNomeFileFattura(string fileName, ref string lastError)
         {
-            string s = string.Empty;
-            if (signed)
+            try
             {
-                s = $@"\.{Enum.GetName(typeof(EstensioniFile), EstensioniFile.p7m)}";
-            }
-
-            bool verifyName = Regex.IsMatch(fileName, @"^[A-Z]{2}[0-9]{11}_[0-9A-Z]{5}\.(?i:xml" + s + ")$", RegexOptions.Multiline);
-            if (!verifyName)
-            {
-                lastError = "Nome file fattura formalmente non corretto!";
+                string name = fileName; 
                 
-            }
+                if (Path.GetExtension(fileName).ToLowerInvariant() == $".{Enum.GetName(typeof(EstensioniFile), EstensioniFile.p7m)}")
+                {
+                    name = Path.GetFileNameWithoutExtension(fileName);
+                }
 
-            return verifyName;
+                if (Path.GetExtension(name).ToLowerInvariant() != $".{Enum.GetName(typeof(EstensioniFile), EstensioniFile.xml)}")
+                {
+                    throw new Exception("Estensione file non valida!");
+                }
+
+                name = Path.GetFileNameWithoutExtension(name);
+
+                string iso3166 = name.Substring(0, 2);
+
+                if (iso3166 != iso3166.ToUpperInvariant())
+                {
+                    throw new Exception("Codice paese non valido!");
+                }
+
+                RegionInfo regionInfo = null;
+                try
+                {
+                    regionInfo = new RegionInfo(iso3166);
+                }
+                catch
+                {
+                    throw new Exception("Codice paese non trovato!");
+                }
+
+                name = name.Substring(2);
+
+                string[] s = name.Split('_');
+
+                if (s.Length != 2)
+                {
+                    throw new Exception("Nome file fattura formalmente non corretto!");
+                }
+
+                string identificativo = s[0];
+                string progressivo = s[1];
+
+                if (regionInfo.TwoLetterISORegionName == "IT")
+                {
+                    if (identificativo.Length == 11)
+                    {
+                        if (!identificativo.All(char.IsDigit))
+                        {
+                            throw new Exception("L'identificativo da 11 deve avere solo numeri IT!");
+                        }
+                    }
+                    else if (identificativo.Length == 16)
+                    {
+                        if (!identificativo.All(char.IsLetterOrDigit))
+                        {
+                            throw new Exception("L'identificativo da 16 deve avere solo caratteri alfanumerici IT!");
+                        }
+                    }
+                    else
+                    {
+                        throw new Exception("L'identificativo deve essere di 11 o 16 caratteri per IT!");
+                    }
+                }
+                else
+                {
+                    if ((identificativo.Length >= 2) && (identificativo.Length <= 28))
+                    {
+                        if (!identificativo.All(char.IsLetterOrDigit))
+                        {
+                            throw new Exception("L'identificativo deve avere solo caratteri alfanumerici!");
+                        }
+                    }
+                    else
+                    {
+                        throw new Exception("L'identificativo deve essere compreso tra 2 e 28 caratteri per non IT!");
+                    }
+                }
+
+                if ((progressivo.Length >= 1) && (progressivo.Length <= 5))
+                {
+                    if (!progressivo.All(char.IsLetterOrDigit))
+                    {
+                        throw new Exception("Il progressivo deve avere solo caratteri alfanumerici!");
+                    }
+                }
+                else
+                {
+                    throw new Exception("Il progressivo deve avere fino ad un massimo di 5 caratteri alfanumerici!");
+                }
+
+                return true;
+            }
+            catch(Exception ex)
+            {
+                lastError = ex.Message;
+                return false;
+            }
         }
 
     }
