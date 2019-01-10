@@ -73,7 +73,7 @@ Attualmente sono presenti i seguenti metodi:
 
 ### Installazione
 ```
-	PM> Install-Package StudioAT.FatturazioneElettronica.Extensions -Version 1.0.1
+	PM> Install-Package StudioAT.FatturazioneElettronica.Extensions -Version 1.0.2
 ```
 dalla Console di Gestione Pacchetti di Visual Studio
 
