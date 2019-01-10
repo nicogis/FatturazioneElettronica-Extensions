@@ -26,7 +26,7 @@ Attualmente sono presenti i seguenti metodi:
 ```csharp
           if (Utilities.VerificaEstraiFirma(@"c:\temp\IT01234567890_FPA01.xml.p7m", out pathFile, ref lastError))
           {
-                // se la firma è valida verrà estratto il file xml
+                // se la firma è valida verrà estratto il file xml nella stessa cartella con lo stesso nome
                 pathFile -> c:\temp\IT01234567890_FPA01.xml
           }
 ```
@@ -36,7 +36,7 @@ Attualmente sono presenti i seguenti metodi:
 ```csharp
           if (Utilities.MarcaTemporale(@"c:\temp\IT01234567890_FPA01.xml.p7m", "https://freetsa.org/tsr", out pathFileTimeStamped, ref lastError, "myUser (optional)", "myPassword (optional)"))
           {
-                //se il metodo ha successo verrà creato il file tsr
+                //se il metodo ha successo verrà creato il file tsr nella stessa cartella con lo stesso nome
                 pathFileTimeStamped -> c:\temp\IT01234567890_FPA01.xml.p7m.tsr
           }
 ```
@@ -59,7 +59,7 @@ Attualmente sono presenti i seguenti metodi:
    }
    
    /// file formalmente non corretto
-   if (Utilities.IsValidNomeFileFattura("IT04567890_FPA01.xml.p7m", ref lastError))
+   if (Utilities.IsValidNomeFileFattura("IT04567890_FPA01.xml", ref lastError))
    {
          
    }
@@ -73,7 +73,9 @@ Attualmente sono presenti i seguenti metodi:
 
 ### Installazione
 ```
-	PM> Install-Package StudioAT.FatturazioneElettronica.Extensions -Version 1.0.0
+	PM> Install-Package StudioAT.FatturazioneElettronica.Extensions -Version 1.0.1
 ```
 dalla Console di Gestione Pacchetti di Visual Studio
+
+##### Nel progetto Visual Studio impostare la piattaforma di destinazione a x64.
 

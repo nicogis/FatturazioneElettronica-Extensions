@@ -3,7 +3,6 @@
     using System;
     using System.Globalization;
     using System.IO;
-    using System.Text.RegularExpressions;
     using System.Linq;
 
     /// <summary>
@@ -55,26 +54,19 @@
         }
 
         /// <summary>
-        /// Firma fattura elettronica
+        /// Firma del file
         /// </summary>
         /// <param name="SubjectCN">Subject Common Name</param>
-        /// <param name="pathFile">file fattura elettronica</param>
+        /// <param name="pathFile">file da firmare</param>
         /// <param name="lastError">ultimo errore nella funzionalità</param>
-        /// <param name="pin">pin smartcard/usb (opzionale). Se non fornito dovrebbe comparire una finestra di dialogo del sistema operativo Windows per indicare il pin</param>
+        /// <param name="pin">pin smartcard/usb (opzionale). Se non fornito comparirà una finestra di dialogo del sistema operativo Windows per indicare il pin</param>
         /// <returns>firma avvenuta con successo</returns>
         public static bool Firma(string SubjectCN, string pathFile, ref string lastError, string pin = null)
         {
             bool success = false;
             try
             {
-                string fileName = Path.GetFileName(pathFile);
-
-                if (!Utilities.IsValidNomeFileFattura(fileName, ref lastError))
-                {
-                    return success;
-                }
-
-
+                
                 if (Utilities.glob.UnlockStatus == 0)
                 {
                     lastError = "Licenza bloccata";
@@ -144,10 +136,10 @@
         }
 
         /// <summary>
-        /// verifica la firma della fattura ed estrae il file originale
+        /// verifica la firma ed estrae il file originale
         /// </summary>
-        /// <param name="pathFileSign">fattura firmata</param>
-        /// <param name="pathFile">path e file della fattura</param>
+        /// <param name="pathFileSign">documento firmato</param>
+        /// <param name="pathFile">path e nome file</param>
         /// <param name="lastError">ultimo errore nella funzionalità</param>
         /// <returns>verifica e estrazione avvenuta con successo</returns>
         /// <example>
@@ -162,13 +154,7 @@
             pathFile = null;
             try
             {
-                string fileName = Path.GetFileName(pathFileSign);
-
-                if (!Utilities.IsValidNomeFileFattura(fileName, ref lastError))
-                {
-                    return success;
-                }
-
+                
                 if (Utilities.glob.UnlockStatus == 0)
                 {
                     lastError = "Licenza bloccata";
@@ -202,9 +188,9 @@
         }
 
         /// <summary>
-        /// applica la marca temporale alla fattura elettronica
+        /// applica la marca temporale al file
         /// </summary>
-        /// <param name="pathFileSign">file firmato della fattura elettronica</param>
+        /// <param name="pathFileSign">file firmato</param>
         /// <param name="tsaUrl">url TSA</param>
         /// <param name="pathFileTimeStamped">file tsr da TSA</param>
         /// <param name="lastError">ultimo errore nella funzionalità</param>
@@ -226,10 +212,7 @@
             {
                 string fileName = Path.GetFileName(pathFileSign);
 
-                if (!Utilities.IsValidNomeFileFattura(fileName, ref lastError))
-                {
-                    return success;
-                }
+                
 
                 if (Utilities.glob.UnlockStatus == 0)
                 {
@@ -302,7 +285,7 @@
         /// converte file tsr in formato tsd (RFC 5544)
         /// </summary>
         /// <param name="pathFileTsr">file tsr</param>
-        /// <param name="pathFileSign">file fattura firmata</param>
+        /// <param name="pathFileSign">file firmato</param>
         /// <param name="pathFileTsd">file tsd creato</param>
         /// <param name="lastError">ultimo errore della funzionalità</param>
         /// <returns>true se la funzionalità ha avuto successo</returns>
@@ -312,13 +295,7 @@
             pathFileTsd = null;
             try
             {
-                string fileName = Path.GetFileName(pathFileSign);
-
-                if (!Utilities.IsValidNomeFileFattura(fileName, ref lastError))
-                {
-                    return success;
-                }
-
+                
 
                 if (Utilities.glob.UnlockStatus == 0)
                 {
