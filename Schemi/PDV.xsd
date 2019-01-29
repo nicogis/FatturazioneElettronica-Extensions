@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="PDV">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="Documento" maxOccurs="unbounded" minOccurs="1">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="DataChiusura" type="xs:date"/>
+              <xs:element name="OggettoDocumento" type="xs:string"/>
+              <xs:element name="NomeFile" type="xs:string"/>
+              
+              <xs:element name="SoggettoProduttore">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="Nome" type="xs:string"/>
+                    <xs:element name="Cognome" type="xs:string"/>
+                    <xs:element name="Denominazione" type="xs:string"/>
+                    <xs:element name="CodiceFiscale" type="xs:string"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="Destinatario">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="Denominazione" type="xs:string"/>
+                    <xs:element name="Codicefiscale" type="xs:string"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="MoreInfo">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="MimeType" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="DocumentClass" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="DocumentType" minOccurs="1" maxOccurs="1">
+                      <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                          <xs:enumeration value="SDI11"/>
+                          <xs:enumeration value="FPA12"/>
+                          <xs:enumeration value="B2B"/>
+                          <xs:enumeration value="B2C"/>
+                        </xs:restriction>
+                      </xs:simpleType>
+                      
+                    </xs:element>
+                    
+                    <xs:element name="DocumentTipology" minOccurs="1" maxOccurs="1">
+                      <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                          <xs:enumeration value="Emessa"/>
+                          <xs:enumeration value="Ricevuta"/>
+                        </xs:restriction>
+                      </xs:simpleType>
+                    </xs:element>
+                    <xs:element name="Embedded">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="CedentePrestatore">
+                            <xs:complexType>
+                              <xs:sequence>
+                                <xs:element name="IdPaese" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                                <xs:element name="IdCodice" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                                <xs:element name="Denominazione" type="xs:string"/>
+                                <xs:element name="Nome" type="xs:string"/>
+                                <xs:element name="Cognome" type="xs:string"/>
+                                <xs:element name="CodiceFiscale" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                              </xs:sequence>
+                            </xs:complexType>
+                          </xs:element>
+                          <xs:element name="DatiGeneraliDocumento" minOccurs="1" maxOccurs="1">
+                            <xs:complexType>
+                              <xs:sequence>
+                                <xs:element name="Data" type="xs:date"/>
+                                <xs:element name="Numero" type="xs:string"/>
+                              </xs:sequence>
+                            </xs:complexType>
+                          </xs:element>
+                          <xs:element name="CessionarioCommittente">
+                            <xs:complexType>
+                              <xs:sequence>
+                                <xs:element name="IdPaese" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                                <xs:element name="IdCodice" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                                <xs:element name="Denominazione" type="xs:string"/>
+                                <xs:element name="Nome" type="xs:string"/>
+                                <xs:element name="Cognome" type="xs:string"/>
+                                <xs:element name="CodiceFiscale" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                              </xs:sequence>
+                            </xs:complexType>
+                          </xs:element>
+                          <xs:element name="Identificativo" minOccurs="1" maxOccurs="1">
+                            <xs:complexType>
+                              <xs:sequence>
+                                <xs:element name="ProgressivoInvio" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                                <xs:element name="CodiceDestinatario" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                              </xs:sequence>
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+              <xs:element type="xs:string" name="Hash"/>
+              <xs:element type="xs:string" name="HashType"/>
+              <xs:element type="xs:date" name="StoreTime"/>
+            </xs:sequence>
+            <xs:attribute name="IdDocumento" use="required">
+              <xs:simpleType>
+                <xs:restriction base="xs:string">
+                  <xs:maxLength value="36"/>
+                </xs:restriction>
+              </xs:simpleType>
+            </xs:attribute>
+          </xs:complexType>
+        </xs:element>
+        
+      </xs:sequence>
+
+      <xs:attribute name="Id">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:maxLength value="36"/>
+            <xs:minLength value="36"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+    </xs:complexType>
+
+    
+  </xs:element>
+  
+</xs:schema>

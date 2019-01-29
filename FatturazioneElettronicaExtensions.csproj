@@ -46,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classi\PDV.cs" />
     <Compile Include="EstensioniFile.cs" />
     <Compile Include="Utilities.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -54,6 +55,9 @@
     <None Include="FatturazioneElettronicaExtensions.nuspec" />
     <None Include="packages.config" />
     <None Include="ReadMe.md" />
+    <None Include="Schemi\PDV.xsd">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -54,6 +54,38 @@
         }
 
         /// <summary>
+        /// calcolo hash di un file
+        /// </summary>
+        /// <param name="pathFile">path and file</param>
+        /// <param name="lastError">ultimo errore nella funzionalità</param>
+        /// <param name="algorithm">algoritmo da utilizzare</param>
+        /// <returns>hash del file</returns>
+        public static string HashFile(string pathFile, ref string lastError, string algorithm = "sha256")
+        {
+            string hash = null;
+            try
+            {
+
+                if (Utilities.glob.UnlockStatus == 0)
+                {
+                    lastError = "Licenza bloccata";
+                    return hash;
+                }
+
+                Chilkat.Crypt2 crypt = new Chilkat.Crypt2();
+                crypt.HashAlgorithm = algorithm;
+                hash = crypt.HashFileENC(pathFile);
+            }
+            catch
+            {
+                throw;
+            }
+
+            return hash;
+
+        }
+
+        /// <summary>
         /// Firma del file
         /// </summary>
         /// <param name="SubjectCN">Subject Common Name</param>

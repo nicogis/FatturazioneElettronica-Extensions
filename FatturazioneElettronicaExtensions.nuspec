@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>$id$</id>
-    <version>1.0.1</version>
+    <version>1.0.3</version>
     <title>Utility per la fatturazione elettronica</title>
     <authors>nicogis</authors>
     <owners>Studio A&amp;T s.r.l.</owners>
@@ -10,7 +10,7 @@
     <projectUrl>https://nicogis.github.io/FatturazioneElettronica-Extensions</projectUrl>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
     <description>Utility per la fatturazione elettronica e la conservazione sostitutiva delle fatture</description>
-    <releaseNotes>Corretto il controllo formale del nome della fattura</releaseNotes>
+    <releaseNotes>Aggiunta classe per generare l'indice del pacchetto di versamento per le fatture elettroniche</releaseNotes>
     <copyright>Copyright 2018</copyright>
     <tags>FatturazioneElettronica FatturaElettronica ConservazioneSostitutiva Firma nicogis</tags>
   </metadata>
