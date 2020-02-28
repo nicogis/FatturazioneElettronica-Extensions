@@ -59,7 +59,7 @@ Attualmente sono presenti i seguenti metodi:
 ```csharp
           if (Utilities.MarcaTemporale(@"c:\temp\IT01234567890_FPA01.xml.p7m", "https://freetsa.org/tsr", out pathFileTimeStamped, ref lastError, "myUser (optional)", "myPassword (optional)"))
           {
-                //se il metodo ha successo verrà creato il file tsr nella stessa cartella con lo stesso nome
+                // se il metodo ha successo verrà creato il file tsr nella stessa cartella con lo stesso nome
                 pathFileTimeStamped -> c:\temp\IT01234567890_FPA01.xml.p7m.tsr
           }
 ```
@@ -68,7 +68,7 @@ Attualmente sono presenti i seguenti metodi:
 ```csharp
           if (Utilities.CreaTsd(@"c:\temp\IT01234567890_FPA01.xml.p7m.tsr", @"c:\temp\IT01234567890_FPA01.xml.p7m", out pathFileTsd, ref lastError)
           {
-                //se il metodo ha successo verrà creato il file tsd
+                // se il metodo ha successo verrà creato il file tsd
                 pathFileTsd -> c:\temp\IT01234567890_FPA01.xml.p7m.tsd
           }
 ```
@@ -80,7 +80,7 @@ Attualmente sono presenti i seguenti metodi:
                 nome file formalmente corretto
           }
    
-          /// file formalmente non corretto
+          // file formalmente non corretto
           if (Utilities.IsValidNomeFileFattura("IT04567890_FPA01.xml", ref lastError))
           {
          
@@ -90,11 +90,10 @@ Attualmente sono presenti i seguenti metodi:
 - *HashFile* genera hash del file
 ```csharp
 
-   string hash = Utilities.HashFile(@"c:\temp\IT01234567890_FPA01.xml.p7m", ref lastError, "sha256"))
+   string hash = Utilities.HashFile(@"c:\temp\IT01234567890_FPA01.xml.p7m", ref lastError, "sha256")
 
-   /// hash sha256 e encode hex
-   string hash = Utilities.HashFile(@"c:\temp\IT01234567890_FPA01.xml.p7m", ref lastError, encode: "hex"))
-
+   // hash sha256 e encode hex
+   string hash = Utilities.HashFile(@"c:\temp\IT01234567890_FPA01.xml.p7m", ref lastError, encode: "hex")
 ```
 
 
