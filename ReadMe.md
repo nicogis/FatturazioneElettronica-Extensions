@@ -42,7 +42,7 @@ Attualmente sono presenti i seguenti metodi:
 ```
 
 
-- *VerificaFirma* verifica una fattura firmata ed estrae il file xml
+- *VerificaFirma* verifica una fattura firmata
 
 ```csharp
 
