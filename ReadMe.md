@@ -6,6 +6,7 @@ La libreria è stata sviluppata in c# e contiene funzionalità di ausilio alla f
 Attualmente sono presenti i seguenti metodi:
 
 - *UnlockLicense* metodo globale per sbloccare le funzionalità della libreria. Per poterla utilizzare in modalità demo per 30gg indicare come codice di sblocco qualsiasi parola
+
 ```csharp
    if (Utilities.UnlockLicense("mycodeUnlock", ref lastError))
    {
@@ -14,6 +15,7 @@ Attualmente sono presenti i seguenti metodi:
 ```
 
 - *Firma* permette di firmare una fattura tramite chiavetta/smartcard
+
 ```csharp
     if (Utilities.Firma("Marco Rossi", @"c:\temp\IT01234567890_FPA01.xml", ref lastError, "12345(pin opzionale)"))
     {
@@ -23,6 +25,7 @@ Attualmente sono presenti i seguenti metodi:
 ```
 
 - *VerificaEstraiFirma* verifica una fattura firmata ed estrae il file xml
+
 ```csharp
           if (Utilities.VerificaEstraiFirma(@"c:\temp\IT01234567890_FPA01.xml.p7m", out pathFile, ref lastError))
           {
@@ -39,7 +42,9 @@ Attualmente sono presenti i seguenti metodi:
 ```
 
 - *VerificaFirma* verifica una fattura firmata ed estrae il file xml
+
 ```csharp
+
           if (!Utilities.VerificaFirma(@"c:\temp\IT01234567890_FPA01.xml.p7m", ref lastError))
           {
                 // la firma non è valida
@@ -48,6 +53,7 @@ Attualmente sono presenti i seguenti metodi:
 ```
 
 - *MarcaTemporale* applica una marca temporale ad un file
+
 ```csharp
           if (Utilities.MarcaTemporale(@"c:\temp\IT01234567890_FPA01.xml.p7m", "https://freetsa.org/tsr", out pathFileTimeStamped, ref lastError, "myUser (optional)", "myPassword (optional)"))
           {
@@ -67,25 +73,28 @@ Attualmente sono presenti i seguenti metodi:
 
 - *IsValidNomeFileFattura* verifica se il nome di un file fattura xml è formalmente corretto. Non richiede lo sblocco della licenza
 ```csharp
-   if (Utilities.IsValidNomeFileFattura("IT01234567890_FPA01.xml.p7m", ref lastError))
-   {
-         nome file formalmente corretto
-   }
+          if (Utilities.IsValidNomeFileFattura("IT01234567890_FPA01.xml.p7m", ref lastError))
+          {
+                nome file formalmente corretto
+          }
    
-   /// file formalmente non corretto
-   if (Utilities.IsValidNomeFileFattura("IT04567890_FPA01.xml", ref lastError))
-   {
+          /// file formalmente non corretto
+          if (Utilities.IsValidNomeFileFattura("IT04567890_FPA01.xml", ref lastError))
+          {
          
-   }
-   
+          }
 ```
-- *HashFile* genera l'hash del file
+
+- *HashFile* genera hash del file
 ```csharp
+
    string hash = Utilities.HashFile(@"c:\temp\IT01234567890_FPA01.xml.p7m", ref lastError, "sha256"))
 
-   //hash sha256 e encode hex
+   /// hash sha256 e encode hex
    string hash = Utilities.HashFile(@"c:\temp\IT01234567890_FPA01.xml.p7m", ref lastError, encode: "hex"))
+
 ```
+
 
 ### Esempi
 
@@ -525,7 +534,6 @@ Esempio controllo hash metadati - file fattura
             }
         }
     }
-
 ```
 
 ### Requisiti
