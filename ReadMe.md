@@ -38,6 +38,7 @@ Attualmente sono presenti i seguenti metodi:
           }
 ```
 
+
 - *VerificaFirma* verifica una fattura firmata ed estrae il file xml
 ```csharp
           if (!Utilities.VerificaFirma(@"c:\temp\IT01234567890_FPA01.xml.p7m", ref lastError))
@@ -46,6 +47,7 @@ Attualmente sono presenti i seguenti metodi:
           }
 
 ```
+
 
 - *MarcaTemporale* applica una marca temporale ad un file
 ```csharp
