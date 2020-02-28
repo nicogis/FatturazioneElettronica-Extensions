@@ -371,7 +371,10 @@ public enum PDVDocumentoMoreInfoDocumentType {
     
     /// <remarks/>
     FPA12,
-    
+
+    /// <remarks/>
+    FPR12,
+
     /// <remarks/>
     B2B,
     

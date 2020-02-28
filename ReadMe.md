@@ -26,13 +26,28 @@ Attualmente sono presenti i seguenti metodi:
 ```csharp
           if (Utilities.VerificaEstraiFirma(@"c:\temp\IT01234567890_FPA01.xml.p7m", out pathFile, ref lastError))
           {
-                // se la firma è valida verrà estratto il file xml nella stessa cartella con lo stesso nome
+                // la firma è valida e verrà estratto il file xml nella stessa cartella con lo stesso nome
                 pathFile -> c:\temp\IT01234567890_FPA01.xml
+          }
+
+          string pathFile = "c:\file\test.xml";
+          if (Utilities.VerificaEstraiFirma(@"c:\temp\IT01234567890_FPA01.xml.p7m", pathFile, ref lastError))
+          {
+                // la firma è valida e verrà estratto il file xml
+                pathFile -> c:\file\test.xml
           }
 ```
 
-- *MarcaTemporale* applica una marca temporale ad un file
+- *VerificaFirma* verifica una fattura firmata ed estrae il file xml
+```csharp
+          if (!Utilities.VerificaFirma(@"c:\temp\IT01234567890_FPA01.xml.p7m", ref lastError))
+          {
+                // la firma non è valida
+          }
 
+```
+
+- *MarcaTemporale* applica una marca temporale ad un file
 ```csharp
           if (Utilities.MarcaTemporale(@"c:\temp\IT01234567890_FPA01.xml.p7m", "https://freetsa.org/tsr", out pathFileTimeStamped, ref lastError, "myUser (optional)", "myPassword (optional)"))
           {
@@ -51,7 +66,6 @@ Attualmente sono presenti i seguenti metodi:
 ```
 
 - *IsValidNomeFileFattura* verifica se il nome di un file fattura xml è formalmente corretto. Non richiede lo sblocco della licenza
-
 ```csharp
    if (Utilities.IsValidNomeFileFattura("IT01234567890_FPA01.xml.p7m", ref lastError))
    {
@@ -66,9 +80,11 @@ Attualmente sono presenti i seguenti metodi:
    
 ```
 - *HashFile* genera l'hash del file
-
 ```csharp
    string hash = Utilities.HashFile(@"c:\temp\IT01234567890_FPA01.xml.p7m", ref lastError, "sha256"))
+
+   //hash sha256 e encode hex
+   string hash = Utilities.HashFile(@"c:\temp\IT01234567890_FPA01.xml.p7m", ref lastError, encode: "hex"))
 ```
 
 ### Esempi
@@ -321,14 +337,205 @@ Esempio per generare un indice del pacchetto di versamento delle fatture elettro
         Console.ReadKey();
 ```
 
+Esempio controllo hash metadati - file fattura
+```csharp
+    
+    string metadato = @"c:\temp\IT01234567890_FPA01_MT_001.xml";
+    using (XmlReader reader = XmlReader.Create(metadato)) 
+    {
+
+        if (xmlSerializer.CanDeserialize(reader))
+        {
+            FileMetadati_Type fileMetadati = (FileMetadati_Type)xmlSerializer.Deserialize(reader);
+
+            string fileCorrente = Path.Combine("c:\temp", fileMetadati.NomeFile);
+            if (fileMetadati.Hash.ToLowerInvariant() != Utilities.HashFile(fileCorrente,ref lastError, encode:"hex").ToLowerInvariant())
+            {
+                throw new Exception($"Hash dichiarato nel metadato differente da quello calcolato sul file:{fileCorrente}");
+            }
+        }
+        else
+        {
+
+            throw new Exception($"Errore a decodificare il metadato:{metadato}");
+
+        }
+
+    }
+
+
+    Classe generata da xsd MessaggiFatturaTypes_v10.xsd    
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fattura/messaggi/v1.0")]
+    [System.Xml.Serialization.XmlRootAttribute("FileMetadati", Namespace = "http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fattura/messaggi/v1.0", IsNullable = false)]
+    public partial class FileMetadati_Type
+    {
+
+        private string identificativoSdIField;
+
+        private string nomeFileField;
+
+        private string hashField;
+
+        private string codiceDestinatarioField;
+
+        private string formatoField;
+
+        private string tentativiInvioField;
+
+        private string messageIdField;
+
+        private string noteField;
+
+        private string versioneField;
+
+        public FileMetadati_Type()
+        {
+            this.versioneField = "1.0";
+        }
+
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public string IdentificativoSdI
+        {
+            get
+            {
+                return this.identificativoSdIField;
+            }
+            set
+            {
+                this.identificativoSdIField = value;
+            }
+        }
+
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public string NomeFile
+        {
+            get
+            {
+                return this.nomeFileField;
+            }
+            set
+            {
+                this.nomeFileField = value;
+            }
+        }
+
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public string Hash
+        {
+            get
+            {
+                return this.hashField;
+            }
+            set
+            {
+                this.hashField = value;
+            }
+        }
+
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public string CodiceDestinatario
+        {
+            get
+            {
+                return this.codiceDestinatarioField;
+            }
+            set
+            {
+                this.codiceDestinatarioField = value;
+            }
+        }
+
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public string Formato
+        {
+            get
+            {
+                return this.formatoField;
+            }
+            set
+            {
+                this.formatoField = value;
+            }
+        }
+
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified, DataType = "integer")]
+        public string TentativiInvio
+        {
+            get
+            {
+                return this.tentativiInvioField;
+            }
+            set
+            {
+                this.tentativiInvioField = value;
+            }
+        }
+
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public string MessageId
+        {
+            get
+            {
+                return this.messageIdField;
+            }
+            set
+            {
+                this.messageIdField = value;
+            }
+        }
+
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public string Note
+        {
+            get
+            {
+                return this.noteField;
+            }
+            set
+            {
+                this.noteField = value;
+            }
+        }
+
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public string versione
+        {
+            get
+            {
+                return this.versioneField;
+            }
+            set
+            {
+                this.versioneField = value;
+            }
+        }
+    }
+
+```
+
 ### Requisiti
 
 - E' richiesto il framework Microsoft .NET 4.6.2
-- Licenza d'uso della libreria Chilkat (per dettagli visitare il sito https://www.chilkatsoft.com) 
+- Licenza d'uso della libreria Chilkat 9.5.0.82 (per dettagli visitare il sito https://www.chilkatsoft.com) 
 
 ### Installazione
 ```
-	PM> Install-Package StudioAT.FatturazioneElettronica.Extensions -Version 1.0.3
+	PM> Install-Package StudioAT.FatturazioneElettronica.Extensions -Version 1.0.4
 ```
 dalla Console di Gestione Pacchetti di Visual Studio
 

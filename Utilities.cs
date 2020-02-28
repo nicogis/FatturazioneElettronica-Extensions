@@ -59,8 +59,9 @@
         /// <param name="pathFile">path and file</param>
         /// <param name="lastError">ultimo errore nella funzionalità</param>
         /// <param name="algorithm">algoritmo da utilizzare</param>
+        /// <param name="encode">encode</param>
         /// <returns>hash del file</returns>
-        public static string HashFile(string pathFile, ref string lastError, string algorithm = "sha256")
+        public static string HashFile(string pathFile, ref string lastError, string algorithm = "sha256", string encode = "base64")
         {
             string hash = null;
             try
@@ -74,6 +75,7 @@
 
                 Chilkat.Crypt2 crypt = new Chilkat.Crypt2();
                 crypt.HashAlgorithm = algorithm;
+                crypt.EncodingMode = encode;
                 hash = crypt.HashFileENC(pathFile);
             }
             catch
@@ -168,7 +170,55 @@
         }
 
         /// <summary>
-        /// verifica la firma ed estrae il file originale
+        /// verifica la firma
+        /// </summary>
+        /// <param name="pathFileSign">documento firmato</param>
+        /// <param name="lastError">ultimo errore nella funzionalità</param>
+        /// <returns>se true la verifica è avvenuta con successo</returns>
+        public static bool VerificaFirma(string pathFileSign, ref string lastError)
+        {
+            bool success = false;
+            try
+            {
+
+                if (Utilities.glob.UnlockStatus == 0)
+                {
+                    lastError = "Licenza bloccata";
+                    return success;
+                }
+
+                Chilkat.BinData bd = new Chilkat.BinData();
+                
+                success = bd.LoadFile(pathFileSign);
+                if (!success)
+                {
+                    lastError = "Errore a caricare il file";
+                    return success;
+                }
+
+                Chilkat.Crypt2 crypt = new Chilkat.Crypt2();
+
+                // Verifica ed estrae il payload contenuto nel .p7m.
+                success = crypt.OpaqueVerifyBd(bd);
+
+                if (!success)
+                {
+                    lastError = crypt.LastErrorText;
+                    return success;
+                }
+
+                success = true;
+            }
+            catch
+            {
+                throw;
+            }
+
+            return success;
+        }
+        
+        /// <summary>
+        /// verifica la firma ed estrae il file originale. Il file verrà creato nella stessa cartella con lo stesso nome
         /// </summary>
         /// <param name="pathFileSign">documento firmato</param>
         /// <param name="pathFile">path e nome file</param>
@@ -182,11 +232,38 @@
         /// </example>
         public static bool VerificaEstraiFirma(string pathFileSign, out string pathFile, ref string lastError)
         {
-            bool success = false;
             pathFile = null;
+            string outputFile = Path.ChangeExtension(pathFileSign, null);
+            bool success = Utilities.VerificaEstraiFirma(pathFileSign, outputFile, ref lastError);
+            if (success)
+            {
+                pathFile = outputFile;
+            }
+
+            return success;
+            
+        }
+
+        /// <summary>
+        /// verifica la firma ed estrae il file originale
+        /// </summary>
+        /// <param name="pathFileSign">documento firmato</param>
+        /// <param name="pathFile">path e nome file</param>
+        /// <param name="lastError">ultimo errore nella funzionalità</param>
+        /// <returns>verifica e estrazione avvenuta con successo</returns>
+        /// <example>
+        /// string pathFileOut = "c:\file\test.xml"
+        /// Utilities.VerificaEstraiFirma(@"c:\temp\IT01234567890_FPA01.xml.p7m", pathFileOut, ref lastError))
+        /// 
+        /// c:\file\test.xml file estratto
+        /// 
+        /// </example>
+        public static bool VerificaEstraiFirma(string pathFileSign, string pathFile, ref string lastError)
+        {
+            bool success = false;
             try
             {
-                
+
                 if (Utilities.glob.UnlockStatus == 0)
                 {
                     lastError = "Licenza bloccata";
@@ -195,11 +272,8 @@
 
                 Chilkat.Crypt2 crypt = new Chilkat.Crypt2();
 
-                string outputFile = Path.ChangeExtension(pathFileSign, null);
-
-
                 //  Verify and restore the original file:
-                success = crypt.VerifyP7M(pathFileSign, outputFile);
+                success = crypt.VerifyP7M(pathFileSign, pathFile);
 
                 if (!success)
                 {
@@ -207,7 +281,6 @@
                     return success;
                 }
 
-                pathFile = outputFile;
                 success = true;
             }
             catch

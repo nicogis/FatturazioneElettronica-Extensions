@@ -38,6 +38,7 @@
                         <xs:restriction base="xs:string">
                           <xs:enumeration value="SDI11"/>
                           <xs:enumeration value="FPA12"/>
+                          <xs:enumeration value="FPR12"/>
                           <xs:enumeration value="B2B"/>
                           <xs:enumeration value="B2C"/>
                         </xs:restriction>
