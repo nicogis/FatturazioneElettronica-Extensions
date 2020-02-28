@@ -89,7 +89,7 @@ Attualmente sono presenti i seguenti metodi:
 
 ### Esempi
 
-Esempio per generare un indice del pacchetto di versamento delle fatture elettroniche
+Esempio per generare un indice del pacchetto di versamento delle fatture elettroniche. L'esempio necessita anche della libreria https://github.com/nicogis/FatturazioneElettronica
 
 ```csharp
         // cartella con le fatture elettroniche firmate
