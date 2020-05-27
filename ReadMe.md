@@ -102,8 +102,11 @@ Attualmente sono presenti i seguenti metodi:
 Esempio per generare un indice del pacchetto di versamento delle fatture elettroniche. L'esempio necessita anche della libreria https://github.com/nicogis/FatturazioneElettronica
 
 ```csharp
-        // cartella con le fatture elettroniche firmate
-        // in questo esempio verranno verificate ed estratte le fatture non firmate nella stessa cartella
+        using FatturazioneElettronica.Type.V_1_2_1;
+        using FatturazioneElettronica.Extensions;
+
+        //cartella con le fatture elettroniche firmate o meno
+        //in questo esempio verranno verificate ed estratte le fatture firmate nella stessa cartella del pathProduttore
         string pathProduttore = @"C:\Temp\Fatture201901";
         
         //dati del produttore
@@ -120,6 +123,8 @@ Esempio per generare un indice del pacchetto di versamento delle fatture elettro
         const string algorithm = "sha256";
 
         const string extensionFileSigned = "p7m";
+        const string extensionFileUnSigned = "xml";
+
         const string mimeType = "text/xml"; //RFC 3023
 
         //tipo di documento
@@ -127,7 +132,6 @@ Esempio per generare un indice del pacchetto di versamento delle fatture elettro
 
         //tipo di fatture (emesse/ricevute)
         PDVDocumentoMoreInfoDocumentTipology tipologiaFattura = PDVDocumentoMoreInfoDocumentTipology.Emessa;
-
 
         try
         {
@@ -140,17 +144,35 @@ Esempio per generare un indice del pacchetto di versamento delle fatture elettro
 
             
             DirectoryInfo d = new DirectoryInfo(pathProduttore);
-            FileInfo[] files = d.GetFiles($"*.{extensionFileSigned}");
+            List<FileInfo> files = d.GetFiles($"*.{extensionFileSigned}").ToList();
+            files.AddRange(d.GetFiles($"*.{extensionFileUnSigned}"));
 
             List<PDVDocumento> pdvDocumenti = new List<PDVDocumento>();
 
+            string outFile;
             foreach (FileInfo s in files)
-            {
-                string outFile;
-                if (!Utilities.VerificaEstraiFirma(s.FullName, out outFile, ref lastError))
+            {                
+                //verifico ed estraggo le firmate
+                if (s.Extension == $".{extensionFileSigned}")
                 {
-                    throw new Exception(lastError);
+
+                    if (!Utilities.VerificaEstraiFirma(s.FullName, out string outF, ref lastError))
+                    {
+                        throw new Exception(lastError);
+                    }
+
+                    outFile = outF;
                 }
+                else if (s.Extension == $".{extensionFileUnSigned}")
+                {
+                    outFile = s.FullName;
+                }
+                else
+                {
+                    throw new Exception($"Estensione non trovata ({extensionFileSigned}, {extensionFileUnSigned}) per il file {s.FullName}!");
+                }
+
+
 
                 string hash = Utilities.HashFile(s.FullName, ref lastError, algorithm);
                 if (string.IsNullOrWhiteSpace(hash))
@@ -160,8 +182,8 @@ Esempio per generare un indice del pacchetto di versamento delle fatture elettro
 
                 PDVDocumento pdvDocumento = null;
 
-                FatturazioneElettronica.FatturaElettronica.CreateInvoice(outFile, out FatturaElettronicaType fatturaElettronicaType);
-
+                FatturaElettronica.CreateInvoice(outFile, out IFatturaElettronicaType f);
+                FatturaElettronicaType fatturaElettronicaType = f as FatturaElettronicaType;
 
                 CedentePrestatoreType cedentePrestatoreType = fatturaElettronicaType.FatturaElettronicaHeader.CedentePrestatore;
                 CessionarioCommittenteType cessionarioCommittenteType = fatturaElettronicaType.FatturaElettronicaHeader.CessionarioCommittente;
@@ -169,13 +191,16 @@ Esempio per generare un indice del pacchetto di versamento delle fatture elettro
 
 
 
-                pdvDocumento = new PDVDocumento();
-                pdvDocumento.DataChiusura = DateTime.Now;
-                PDVDocumentoDestinatario pdvDocumentoDestinatario = new PDVDocumentoDestinatario();
+                pdvDocumento = new PDVDocumento
+                {
+                    DataChiusura = DateTime.Now
+                };
 
-                
-                pdvDocumentoDestinatario.Codicefiscale = destinatario;
-                pdvDocumentoDestinatario.Denominazione = destinatarioDenominazione;
+                PDVDocumentoDestinatario pdvDocumentoDestinatario = new PDVDocumentoDestinatario
+                {
+                    Codicefiscale = destinatario,
+                    Denominazione = destinatarioDenominazione
+                };
 
                 pdvDocumento.Destinatario = pdvDocumentoDestinatario;
                 pdvDocumento.Hash = hash;
@@ -185,8 +210,10 @@ Esempio per generare un indice del pacchetto di versamento delle fatture elettro
 
                 PDVDocumentoMoreInfoEmbedded pdvDocumentoMoreInfoEmbedded = new PDVDocumentoMoreInfoEmbedded();
 
-                PDVDocumentoMoreInfoEmbeddedCedentePrestatore pdvDocumentoMoreInfoEmbeddedCedentePrestatore = new PDVDocumentoMoreInfoEmbeddedCedentePrestatore();
-                pdvDocumentoMoreInfoEmbeddedCedentePrestatore.CodiceFiscale = cedentePrestatoreType.DatiAnagrafici.CodiceFiscale;
+                PDVDocumentoMoreInfoEmbeddedCedentePrestatore pdvDocumentoMoreInfoEmbeddedCedentePrestatore = new PDVDocumentoMoreInfoEmbeddedCedentePrestatore
+                {
+                    CodiceFiscale = cedentePrestatoreType.DatiAnagrafici.CodiceFiscale
+                };
 
                 int i = 0;
                 foreach (ItemsChoiceType ict in cedentePrestatoreType.DatiAnagrafici.Anagrafica.ItemsElementName)
@@ -257,13 +284,17 @@ Esempio per generare un indice del pacchetto di versamento delle fatture elettro
 
                 pdvDocumentoMoreInfoEmbeddedCessionarioCommittente.CodiceFiscale = cessionarioCommittenteType.DatiAnagrafici.CodiceFiscale;
 
-                PDVDocumentoMoreInfoEmbeddedDatiGeneraliDocumento pdvDocumentoMoreInfoEmbeddedDatiGeneraliDocumento = new PDVDocumentoMoreInfoEmbeddedDatiGeneraliDocumento();
-                pdvDocumentoMoreInfoEmbeddedDatiGeneraliDocumento.Numero = datiGeneraliDocumentoType.Numero;
-                pdvDocumentoMoreInfoEmbeddedDatiGeneraliDocumento.Data = datiGeneraliDocumentoType.Data;
+                PDVDocumentoMoreInfoEmbeddedDatiGeneraliDocumento pdvDocumentoMoreInfoEmbeddedDatiGeneraliDocumento = new PDVDocumentoMoreInfoEmbeddedDatiGeneraliDocumento
+                {
+                    Numero = datiGeneraliDocumentoType.Numero,
+                    Data = datiGeneraliDocumentoType.Data
+                };
 
-                PDVDocumentoMoreInfoEmbeddedIdentificativo pdvDocumentoMoreInfoEmbeddedIdentificativo = new PDVDocumentoMoreInfoEmbeddedIdentificativo();
-                pdvDocumentoMoreInfoEmbeddedIdentificativo.CodiceDestinatario = fatturaElettronicaType.FatturaElettronicaHeader.DatiTrasmissione.CodiceDestinatario;
-                pdvDocumentoMoreInfoEmbeddedIdentificativo.ProgressivoInvio = fatturaElettronicaType.FatturaElettronicaHeader.DatiTrasmissione.ProgressivoInvio;
+                PDVDocumentoMoreInfoEmbeddedIdentificativo pdvDocumentoMoreInfoEmbeddedIdentificativo = new PDVDocumentoMoreInfoEmbeddedIdentificativo
+                {
+                    CodiceDestinatario = fatturaElettronicaType.FatturaElettronicaHeader.DatiTrasmissione.CodiceDestinatario,
+                    ProgressivoInvio = fatturaElettronicaType.FatturaElettronicaHeader.DatiTrasmissione.ProgressivoInvio
+                };
 
                 pdvDocumentoMoreInfoEmbedded.CedentePrestatore = pdvDocumentoMoreInfoEmbeddedCedentePrestatore;
                 pdvDocumentoMoreInfoEmbedded.CessionarioCommittente = pdvDocumentoMoreInfoEmbeddedCessionarioCommittente;
@@ -271,20 +302,24 @@ Esempio per generare un indice del pacchetto di versamento delle fatture elettro
                 pdvDocumentoMoreInfoEmbedded.Identificativo = pdvDocumentoMoreInfoEmbeddedIdentificativo;
 
 
-                PDVDocumentoMoreInfo pdvDocumentoMoreInfo = new PDVDocumentoMoreInfo();
-                pdvDocumentoMoreInfo.DocumentClass = documentClass;
-                pdvDocumentoMoreInfo.Embedded = pdvDocumentoMoreInfoEmbedded;
-                pdvDocumentoMoreInfo.MimeType = mimeType;
+                PDVDocumentoMoreInfo pdvDocumentoMoreInfo = new PDVDocumentoMoreInfo
+                {
+                    DocumentClass = documentClass,
+                    Embedded = pdvDocumentoMoreInfoEmbedded,
+                    MimeType = mimeType,
 
 
-                pdvDocumentoMoreInfo.DocumentType = (PDVDocumentoMoreInfoDocumentType)Enum.Parse(typeof(PDVDocumentoMoreInfoDocumentType), Enum.GetName(typeof(FormatoTrasmissioneType), fatturaElettronicaType.FatturaElettronicaHeader.DatiTrasmissione.FormatoTrasmissione));
-                pdvDocumentoMoreInfo.DocumentTipology = tipologiaFattura;
+                    DocumentType = (PDVDocumentoMoreInfoDocumentType)Enum.Parse(typeof(PDVDocumentoMoreInfoDocumentType), Enum.GetName(typeof(FormatoTrasmissioneType), fatturaElettronicaType.FatturaElettronicaHeader.DatiTrasmissione.FormatoTrasmissione)),
+                    DocumentTipology = tipologiaFattura
+                };
 
 
                 pdvDocumento.MoreInfo = pdvDocumentoMoreInfo;
 
-                PDVDocumentoSoggettoProduttore pdvDocumentoSoggettoProduttore = new PDVDocumentoSoggettoProduttore();
-                pdvDocumentoSoggettoProduttore.CodiceFiscale = produttore;
+                PDVDocumentoSoggettoProduttore pdvDocumentoSoggettoProduttore = new PDVDocumentoSoggettoProduttore
+                {
+                    CodiceFiscale = produttore
+                };
 
 
                 if ((string.IsNullOrWhiteSpace(produttoreDenominazione)) && (!((string.IsNullOrWhiteSpace(produttoreNome)) && (string.IsNullOrWhiteSpace(produttoreCognome)))))
@@ -331,10 +366,10 @@ Esempio per generare un indice del pacchetto di versamento delle fatture elettro
 
                 Console.WriteLine("Operazione eseguita con successo!");
 
-                //firma indicePacchettoDiVersamento da smartcard/usb
+                // firma indicePacchettoDiVersamento da smartcard/usb
                 //Utilities.Firma("mySubjectCM", indicePacchettoDiVersamento, ref lastError, "00000");
 
-                //marca indicePacchettoDiVersamento
+                // marca indicePacchettoDiVersamento
                 //Utilities.MarcaTemporale(indicePacchettoDiVersamento + $".{extensionFileSigned}", "https://myurltsr", out string indicePacchettoDiVersamentoSignedMarked, ref lastError, "myuser","mypwd");
 
             }
