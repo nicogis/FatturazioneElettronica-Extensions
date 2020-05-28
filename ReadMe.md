@@ -106,7 +106,7 @@ Esempio per generare un indice del pacchetto di versamento delle fatture elettro
         using FatturazioneElettronica.Extensions;
 
         //cartella (pathProduttore) con le fatture elettroniche firmate e/o non firmate
-        //i file xml delle fatture firmate verranno estratte nella stessa cartella (pathProduttore)
+        //i file xml delle fatture firmate verranno estratti nella stessa cartella (pathProduttore)
         string pathProduttore = @"C:\Temp\Fatture201901";
         
         //dati del produttore
