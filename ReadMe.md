@@ -1,4 +1,4 @@
-﻿## Utilities per Fatturazione elettronica verso la Pubblica Amministrazione/privati e conservazione sostituitiva delle fatture
+﻿## Utilities per Fatturazione elettronica verso la Pubblica Amministrazione/privati e conservazione sostitutiva delle fatture
 
 ### Descrizione
 La libreria è stata sviluppata in c# e contiene funzionalità di ausilio alla fatturazione elettronica e alla conservazione sostitutiva delle fatture elettroniche
