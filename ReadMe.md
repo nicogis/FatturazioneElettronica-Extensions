@@ -131,6 +131,7 @@ Esempio per generare un indice del pacchetto di versamento delle fatture elettro
         const string documentClass = "Fattura elettronica";
 
         //tipo di fatture (emesse/ricevute)
+	//in questo esempio sono emesse
         PDVDocumentoMoreInfoDocumentTipology tipologiaFattura = PDVDocumentoMoreInfoDocumentTipology.Emessa;
 
         try
