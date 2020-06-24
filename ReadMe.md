@@ -57,7 +57,7 @@ Attualmente sono presenti i seguenti metodi:
 - *MarcaTemporale* applica una marca temporale ad un file
 
 ```csharp
-          // esempio con Aruba il TSA è https://servizi.arubapec.it/tsa/ngrequest.php
+          // con Aruba, ad esempio, il TSA è https://servizi.arubapec.it/tsa/ngrequest.php
 	  
           if (Utilities.MarcaTemporale(@"c:\temp\IT01234567890_FPA01.xml.p7m", "https://freetsa.org/tsr", out pathFileTimeStamped, ref lastError, "myUser (optional)", "myPassword (optional)"))
           {
