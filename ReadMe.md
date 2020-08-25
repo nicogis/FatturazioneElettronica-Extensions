@@ -5,10 +5,10 @@ La libreria è stata sviluppata in c# e contiene funzionalità di ausilio alla f
 
 Attualmente sono presenti i seguenti metodi:
 
-- *UnlockLicense* metodo globale per sbloccare le funzionalità della libreria. Per poterla utilizzare in modalità demo per 30gg indicare come codice di sblocco qualsiasi parola
+- *UnlockLicense* metodo globale per sbloccare le funzionalità della libreria Chilkat. Per poterla utilizzare in modalità demo per 30gg indicare come codice di sblocco qualsiasi parola
 
 ```csharp
-   if (Utilities.UnlockLicense("mycodeUnlock", ref lastError))
+   if (Utilities.UnlockLicense("mycodeUnlockChilkat", ref lastError))
    {
          // libreria sbloccata con successo
    }
