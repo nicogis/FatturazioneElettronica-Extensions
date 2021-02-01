@@ -592,7 +592,7 @@ Esempio controllo hash metadati - file fattura
 
 ### Installazione
 ```
-	PM> Install-Package StudioAT.FatturazioneElettronica.Extensions -Version 1.0.4
+	PM> Install-Package StudioAT.FatturazioneElettronica.Extensions -Version 1.0.5
 ```
 dalla Console di Gestione Pacchetti di Visual Studio
 
