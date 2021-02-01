@@ -1,6 +1,7 @@
 ﻿namespace FatturazioneElettronica.Extensions
 {
     using System;
+    using System.Collections.Generic;
     using System.Globalization;
     using System.IO;
     using System.Linq;
@@ -88,14 +89,54 @@
         }
 
         /// <summary>
+        /// elenco di CSP nel sistema windows
+        /// </summary>
+        /// <param name="lastError">ultimo errore nella funzionalità</param>
+        /// <returns>elenco di CSP nel sistema windows</returns>
+        public static List<string> CSPs(ref string lastError)
+        {
+            List<string> csps = null;
+            try
+            {
+                
+                Chilkat.Csp csp = new Chilkat.Csp();
+                Chilkat.StringTable st = new Chilkat.StringTable();
+
+                bool success = csp.GetProviders(st);
+                if (success == false)
+                {
+                    lastError = csp.LastErrorText;
+                    return null;
+                }
+
+                // lista csp su sistema windows
+                int i = 0;
+                int numProviders = st.Count;
+                csps = new List<string>();
+                while (i < numProviders)
+                {
+                    csps.Add(st.StringAt(i));
+                    i++;
+                } 
+            }
+            catch
+            {
+                throw;
+            }
+
+            return csps;
+        }
+
+        /// <summary>
         /// Firma del file
         /// </summary>
         /// <param name="SubjectCN">Subject Common Name</param>
         /// <param name="pathFile">file da firmare</param>
         /// <param name="lastError">ultimo errore nella funzionalità</param>
         /// <param name="pin">pin smartcard/usb (opzionale). Se non fornito comparirà una finestra di dialogo del sistema operativo Windows per indicare il pin</param>
+        /// <param name="csp">provider csp (opzionale). Se non indicato verrà selezionato automaticamente. Utilizzare questo parametro per indicarne uno specifico. Utilizzare il metodo CSPs per visualizza i csp presenti nel sistema</param>
         /// <returns>firma avvenuta con successo</returns>
-        public static bool Firma(string SubjectCN, string pathFile, ref string lastError, string pin = null)
+        public static bool Firma(string SubjectCN, string pathFile, ref string lastError, string pin = null, string csp = null)
         {
             bool success = false;
             try
@@ -111,6 +152,17 @@
 
                 //  Utilizza il certificato su una smartcard o su USB.
                 Chilkat.Cert cert = new Chilkat.Cert();
+
+                // cryptographic service provider
+                if (!string.IsNullOrWhiteSpace(csp))
+                {
+                    success = cert.LoadFromSmartcard(csp);
+                    if (success != true)
+                    {
+                        lastError = cert.LastErrorText;
+                        return success;
+                    }
+                }
 
                 //  Passa il Subject CN del certificato al metodo LoadByCommonName.
                 success = cert.LoadByCommonName(SubjectCN);

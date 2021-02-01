@@ -14,15 +14,25 @@ Attualmente sono presenti i seguenti metodi:
    }
 ```
 
-- *Firma* permette di firmare una fattura tramite chiavetta/smartcard
+- *Firma* permette di firmare una fattura tramite chiavetta/smartcard. Se il pin se non indicato verrà visualizzata una finestra di dialogo. Se il csp non è indicato verrà automaticamente selezionato; comunque è possibile indicarne uno specifico. Per vedere l'elenco dei csp utilizzare il metodo CSPs. 
 
 ```csharp
-    if (Utilities.Firma("Marco Rossi", @"c:\temp\IT01234567890_FPA01.xml", ref lastError, "12345(pin opzionale)"))
+    if (Utilities.Firma("Marco Rossi", @"c:\temp\IT01234567890_FPA01.xml", ref lastError, "12345(pin opzionale)", "Bit4id UKC Service Provider (CSP opzionale"))
     {
         //se il metodo ha successo verrà creato il file firmato   
         pathFile -> c:\temp\IT01234567890_FPA01.xml.p7m
     }
 ```
+
+- *CSPs* elenco dei csp disponibili nel sistema windows. Non richiede lo sblocco della licenza
+
+```csharp
+    
+    List<string> csp = Utilities.CSPs(ref lastError)
+    
+```
+
+
 
 - *VerificaEstraiFirma* verifica una fattura firmata ed estrae il file xml
 
