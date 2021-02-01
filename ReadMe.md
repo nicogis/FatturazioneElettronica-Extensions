@@ -1,14 +1,14 @@
-﻿## Utilities per Fatturazione elettronica verso la Pubblica Amministrazione/privati e conservazione sostituitiva delle fatture
+﻿## Utilities per Fatturazione elettronica verso la Pubblica Amministrazione/privati e conservazione sostitutiva delle fatture
 
 ### Descrizione
 La libreria è stata sviluppata in c# e contiene funzionalità di ausilio alla fatturazione elettronica e alla conservazione sostitutiva delle fatture elettroniche
 
 Attualmente sono presenti i seguenti metodi:
 
-- *UnlockLicense* metodo globale per sbloccare le funzionalità della libreria. Per poterla utilizzare in modalità demo per 30gg indicare come codice di sblocco qualsiasi parola
+- *UnlockLicense* metodo globale per sbloccare le funzionalità della libreria Chilkat. Per poterla utilizzare in modalità demo per 30gg indicare come codice di sblocco qualsiasi parola
 
 ```csharp
-   if (Utilities.UnlockLicense("mycodeUnlock", ref lastError))
+   if (Utilities.UnlockLicense("mycodeUnlockChilkat", ref lastError))
    {
          // libreria sbloccata con successo
    }
@@ -67,6 +67,8 @@ Attualmente sono presenti i seguenti metodi:
 - *MarcaTemporale* applica una marca temporale ad un file
 
 ```csharp
+          // con Aruba, ad esempio, il TSA è https://servizi.arubapec.it/tsa/ngrequest.php
+	  
           if (Utilities.MarcaTemporale(@"c:\temp\IT01234567890_FPA01.xml.p7m", "https://freetsa.org/tsr", out pathFileTimeStamped, ref lastError, "myUser (optional)", "myPassword (optional)"))
           {
                 // se il metodo ha successo verrà creato il file tsr nella stessa cartella con lo stesso nome
@@ -115,8 +117,8 @@ Esempio per generare un indice del pacchetto di versamento delle fatture elettro
         using FatturazioneElettronica.Type.V_1_2_1;
         using FatturazioneElettronica.Extensions;
 
-        //cartella con le fatture elettroniche firmate o meno
-        //in questo esempio verranno verificate ed estratte le fatture firmate nella stessa cartella del pathProduttore
+        //cartella (pathProduttore) con le fatture elettroniche firmate e/o non firmate
+        //i file xml delle fatture firmate verranno estratti nella stessa cartella (pathProduttore)
         string pathProduttore = @"C:\Temp\Fatture201901";
         
         //dati del produttore
@@ -141,6 +143,7 @@ Esempio per generare un indice del pacchetto di versamento delle fatture elettro
         const string documentClass = "Fattura elettronica";
 
         //tipo di fatture (emesse/ricevute)
+	//in questo esempio sono emesse
         PDVDocumentoMoreInfoDocumentTipology tipologiaFattura = PDVDocumentoMoreInfoDocumentTipology.Emessa;
 
         try
