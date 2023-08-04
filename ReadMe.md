@@ -8,19 +8,27 @@ Attualmente sono presenti i seguenti metodi:
 - *UnlockLicense* metodo globale per sbloccare le funzionalità della libreria Chilkat. Per poterla utilizzare in modalità demo per 30gg indicare come codice di sblocco qualsiasi parola
 
 ```csharp
-   if (Utilities.UnlockLicense("mycodeUnlockChilkat", ref lastError))
-   {
+    if (Utilities.UnlockLicense("mycodeUnlockChilkat", ref lastError))
+    {
          // libreria sbloccata con successo
-   }
+    }
 ```
 
-- *Firma* permette di firmare una fattura tramite chiavetta/smartcard. Se il pin se non indicato verrà visualizzata una finestra di dialogo. Se il csp non è indicato verrà automaticamente selezionato; comunque è possibile indicarne uno specifico. Per vedere l'elenco dei csp utilizzare il metodo CSPs. 
+- *Firma* permette di firmare una fattura in formato CAdES o XAdES tramite chiavetta/smartcard. Se il pin se non indicato verrà visualizzata una finestra di dialogo. Se il csp non è indicato verrà automaticamente selezionato; comunque è possibile indicarne uno specifico. Per vedere l'elenco dei csp utilizzare il metodo CSPs. 
 
 ```csharp
-    if (Utilities.Firma("Marco Rossi", @"c:\temp\IT01234567890_FPA01.xml", ref lastError, "12345(pin opzionale)", "Bit4id UKC Service Provider (CSP opzionale"))
+    // firma CAdES
+    if (Utilities.Firma("Marco Rossi", @"c:\temp\IT01234567890_FPA01.xml", ref lastError, "12345 (pin opzionale)", "Bit4id UKC Service Provider (CSP opzionale)", FormatiFirma.CAdES))
     {
-        //se il metodo ha successo verrà creato il file firmato   
+        //se il metodo ha successo verrà creato il file firmato p7m   
         pathFile -> c:\temp\IT01234567890_FPA01.xml.p7m
+    }
+    
+    // firma XAdES
+    if (Utilities.Firma("Marco Rossi", @"c:\temp\IT01234567890_FPA01.xml", ref lastError, "12345 (pin opzionale)", "Bit4id UKC Service Provider (CSP opzionale)", FormatiFirma.XAdES))
+    {
+        //se il metodo ha successo verrà creato il file firmato xml con suffisso _signed   
+        pathFile -> c:\temp\IT01234567890_FPA01_signed.xml
     }
 ```
 
@@ -34,54 +42,58 @@ Attualmente sono presenti i seguenti metodi:
 
 
 
-- *VerificaEstraiFirma* verifica una fattura firmata ed estrae il file xml
+- *VerificaEstraiFirma* verifica una fattura firmata CAdES ed estrae il file xml
 
 ```csharp
-          if (Utilities.VerificaEstraiFirma(@"c:\temp\IT01234567890_FPA01.xml.p7m", out pathFile, ref lastError))
+          if (Utilities.VerificaEstraiFirma(@"c:\temp\IT01234567890_FPA01.xml.p7m", out string pathFile, ref lastError))
           {
-                // la firma è valida e verrà estratto il file xml nella stessa cartella con lo stesso nome
+                // la firma è valida e verrà estratto il file xml nella stessa cartella con il nome di input senza estensione p7m
                 pathFile -> c:\temp\IT01234567890_FPA01.xml
           }
 
           string pathFile = "c:\file\test.xml";
           if (Utilities.VerificaEstraiFirma(@"c:\temp\IT01234567890_FPA01.xml.p7m", pathFile, ref lastError))
           {
-                // la firma è valida e verrà estratto il file xml
+                // la firma è valida e verrà estratto il file come impostato nella variabile pathFile
                 pathFile -> c:\file\test.xml
           }
 ```
 
 
-- *VerificaFirma* verifica una fattura firmata
+- *VerificaFirma* verifica una fattura firmata in formato CAdES (p7m) o XAdES (xml)
 
 ```csharp
 
           if (!Utilities.VerificaFirma(@"c:\temp\IT01234567890_FPA01.xml.p7m", ref lastError))
           {
-                // la firma non è valida
+                // la firma CAdES non è valida 
           }
 
+          if (!Utilities.VerificaFirma(@"c:\temp\IT01234567890_FPA01_signed.xml", ref lastError))
+          {
+                // la firma XAdES non è valida o non sono presenti firme nel file
+          }
 ```
 
 
-- *MarcaTemporale* applica una marca temporale ad un file
+- *MarcaTemporale* applica una marca temporale ad un file CAdES
 
 ```csharp
           // con Aruba, ad esempio, il TSA è https://servizi.arubapec.it/tsa/ngrequest.php
 	  
-          if (Utilities.MarcaTemporale(@"c:\temp\IT01234567890_FPA01.xml.p7m", "https://freetsa.org/tsr", out pathFileTimeStamped, ref lastError, "myUser (optional)", "myPassword (optional)"))
+          if (Utilities.MarcaTemporale(@"c:\temp\IT01234567890_FPA01.xml.p7m", "https://freetsa.org/tsr", out string pathFileTimeStamped, ref lastError, "myUser (optional)", "myPassword (optional)"))
           {
-                // se il metodo ha successo verrà creato il file tsr nella stessa cartella con lo stesso nome
-                pathFileTimeStamped -> c:\temp\IT01234567890_FPA01.xml.p7m.tsr
+                // se il metodo ha successo verrà creato il file tsr nella stessa cartella con lo stesso nome del file
+                pathFileTimeStamped -> c:\temp\IT01234567890_FPA01.xml.tsr
           }
 ```
 
-- *CreaTsd* crea un file tsd (RFC 5544) da un file tsr ed una fattura firmata
+- *CreaTsd* crea un file tsd (RFC 5544) da un file tsr ed una fattura firmata CAdES
 ```csharp
-          if (Utilities.CreaTsd(@"c:\temp\IT01234567890_FPA01.xml.p7m.tsr", @"c:\temp\IT01234567890_FPA01.xml.p7m", out pathFileTsd, ref lastError)
+          if (Utilities.CreaTsd(@"c:\temp\IT01234567890_FPA01.xml.tsr", @"c:\temp\IT01234567890_FPA01.xml.p7m", out string pathFileTsd, ref lastError)
           {
-                // se il metodo ha successo verrà creato il file tsd
-                pathFileTsd -> c:\temp\IT01234567890_FPA01.xml.p7m.tsd
+                // se il metodo ha successo verrà creato il file tsd nella stessa cartella con lo stesso nome del file marcato
+                pathFileTsd -> c:\temp\IT01234567890_FPA01.xml.tsd
           }
 ```
 
@@ -588,13 +600,13 @@ Esempio controllo hash metadati - file fattura
 ### Requisiti
 
 - E' richiesto il framework Microsoft .NET 4.6.2
-- Licenza d'uso della libreria Chilkat 9.5.0.82 (per dettagli visitare il sito https://www.chilkatsoft.com) 
+- Licenza d'uso della libreria Chilkat alla versione 9.5.0.95 (per dettagli visitare il sito https://www.chilkatsoft.com) 
 
 ### Installazione
 ```
-	PM> Install-Package StudioAT.FatturazioneElettronica.Extensions -Version 1.0.5
+	PM> Install-Package StudioAT.FatturazioneElettronica.Extensions -Version 1.0.6
 ```
 dalla Console di Gestione Pacchetti di Visual Studio
 
-##### Nel progetto Visual Studio impostare la piattaforma di destinazione a x64.
+##### Nel progetto Visual Studio impostare la piattaforma di destinazione a x64 e non 'AnyCPU'.
 
