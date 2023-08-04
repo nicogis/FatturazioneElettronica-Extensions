@@ -610,3 +610,6 @@ dalla Console di Gestione Pacchetti di Visual Studio
 
 ##### Nel progetto Visual Studio impostare la piattaforma di destinazione a x64 e non 'AnyCPU'.
 
+### TODO
+- Firma remota (già disponibile per uno dei principali provider ma non inclusa nella libreria)
+
