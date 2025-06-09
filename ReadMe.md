@@ -14,33 +14,23 @@ Attualmente sono presenti i seguenti metodi:
     }
 ```
 
-- *Firma* permette di firmare una fattura in formato CAdES o XAdES tramite chiavetta/smartcard. Se il pin se non indicato verrà visualizzata una finestra di dialogo. Se il csp non è indicato verrà automaticamente selezionato; comunque è possibile indicarne uno specifico. Per vedere l'elenco dei csp utilizzare il metodo CSPs. 
+- *Firma* permette di firmare una fattura in formato CAdES o XAdES tramite chiavetta/smartcard. Se il pin non è indicato verrà visualizzata una finestra di dialogo.  
 
 ```csharp
     // firma CAdES
-    if (Utilities.Firma("Marco Rossi", @"c:\temp\IT01234567890_FPA01.xml", ref lastError, "12345 (pin opzionale)", "Bit4id UKC Service Provider (CSP opzionale)", FormatiFirma.CAdES))
+    if (Utilities.Firma(@"c:\temp\IT01234567890_FPA01.xml", ref lastError, "cn=Marco Rossi", "12345 (pin opzionale)", FormatiFirma.CAdES))
     {
         //se il metodo ha successo verrà creato il file firmato p7m   
         pathFile -> c:\temp\IT01234567890_FPA01.xml.p7m
     }
     
     // firma XAdES
-    if (Utilities.Firma("Marco Rossi", @"c:\temp\IT01234567890_FPA01.xml", ref lastError, "12345 (pin opzionale)", "Bit4id UKC Service Provider (CSP opzionale)", FormatiFirma.XAdES))
+    if (Utilities.Firma(@"c:\temp\IT01234567890_FPA01.xml", ref lastError,"cn=Marco Rossi", "12345 (pin opzionale)", FormatiFirma.XAdES))
     {
         //se il metodo ha successo verrà creato il file firmato xml con suffisso _signed   
         pathFile -> c:\temp\IT01234567890_FPA01_signed.xml
     }
 ```
-
-- *CSPs* elenco dei csp disponibili nel sistema windows. Non richiede lo sblocco della licenza
-
-```csharp
-    
-    List<string> csp = Utilities.CSPs(ref lastError)
-    
-```
-
-
 
 - *VerificaEstraiFirma* verifica una fattura firmata CAdES ed estrae il file xml
 
@@ -600,16 +590,14 @@ Esempio controllo hash metadati - file fattura
 ### Requisiti
 
 - E' richiesto il framework Microsoft .NET 4.6.2
-- Licenza d'uso della libreria Chilkat alla versione 9.5.0.95 (per dettagli visitare il sito https://www.chilkatsoft.com) 
+- Licenza d'uso della libreria Chilkat alla versione 11.0.0.0 (per dettagli visitare il sito https://www.chilkatsoft.com) 
 
 ### Installazione
 ```
-	PM> Install-Package StudioAT.FatturazioneElettronica.Extensions -Version 1.0.6
+	PM> Install-Package StudioAT.FatturazioneElettronica.Extensions -Version 1.0.7
 ```
 dalla Console di Gestione Pacchetti di Visual Studio
 
 ##### Nel progetto Visual Studio impostare la piattaforma di destinazione a x64 e non 'AnyCPU'.
 
-### TODO
-- Firma remota (già disponibile per uno dei principali provider ma non inclusa nella libreria)
 

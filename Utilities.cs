@@ -33,7 +33,7 @@ namespace FatturazioneElettronica.Extensions
         /// <returns>true sblocco della licenza con successo</returns>
         public static bool UnlockLicense(string unlock, ref string lastError)
         {
-            bool success = false;
+            bool success;
             try
             {
                 Utilities.glob = new Global();
@@ -90,9 +90,11 @@ namespace FatturazioneElettronica.Extensions
                     return hash;
                 }
 
-                Crypt2 crypt = new Crypt2();
-                crypt.HashAlgorithm = algorithm;
-                crypt.EncodingMode = encode;
+                Crypt2 crypt = new Crypt2
+                {
+                    HashAlgorithm = algorithm,
+                    EncodingMode = encode
+                };
                 hash = crypt.HashFileENC(pathFile);
             }
             catch
@@ -105,55 +107,76 @@ namespace FatturazioneElettronica.Extensions
         }
 
         /// <summary>
-        /// elenco di CSP nel sistema windows
-        /// </summary>
-        /// <param name="lastError">ultimo errore nella funzionalità</param>
-        /// <returns>elenco di CSP nel sistema windows</returns>
-        public static List<string> CSPs(ref string lastError)
-        {
-            List<string> csps = null;
-            try
-            {
-                
-                Csp csp = new Csp();
-                StringTable st = new StringTable();
-
-                bool success = csp.GetProviders(st);
-                if (success == false)
-                {
-                    lastError = csp.LastErrorText;
-                    return null;
-                }
-
-                // lista csp su sistema windows
-                int i = 0;
-                int numProviders = st.Count;
-                csps = new List<string>();
-                while (i < numProviders)
-                {
-                    csps.Add(st.StringAt(i));
-                    i++;
-                } 
-            }
-            catch
-            {
-                throw;
-            }
-
-            return csps;
-        }
-
-        /// <summary>
         /// Firma del file
         /// </summary>
-        /// <param name="SubjectCN">Subject Common Name</param>
         /// <param name="pathFile">file da firmare</param>
         /// <param name="lastError">ultimo errore nella funzionalità</param>
+        /// <param name="certSpec">
+        /// Criterio per selezionare il certificato da un HSM o dallo store.
+        /// I valori supportati sono:
+        /// 
+        /// - <b>""</b>: (stringa vuota) Se è collegato un solo HSM con un solo certificato contenente la chiave privata,
+        ///   Chilkat selezionerà automaticamente quel certificato.
+        /// 
+        /// - <b>cn=&lt;common name&gt;</b>: Cerca e carica il certificato con il CN (Common Name) specificato.
+        ///   Esempio: <c>cn=Mario Rossi</c>
+        /// 
+        /// - <b>subjectdn_withtags=&lt;DN con tag&gt;</b>: Cerca il certificato con DN contenente tag (es. C, O, OU, CN).
+        ///   Esempio: <c>subjectdn_withtags=C=IT, O=Company, CN=www.site.it</c>
+        /// 
+        /// - <b>subjectdn=&lt;DN senza tag&gt;</b>: Cerca il certificato con DN senza tag.
+        ///   Esempio: <c>subjectdn=IT, Roma, Company, www.site.it, info@site.it</c>
+        /// 
+        /// - <b>issuercn=&lt;seriale:CN emittente&gt;</b>: Cerca per numero di serie esadecimale e CN dell’emittente.
+        ///   Esempio: <c>01020304:Let's Encrypt Authority X1</c>
+        /// 
+        /// - <b>serial=&lt;numero di serie esadecimale&gt;</b>: Cerca per numero seriale esadecimale.
+        /// 
+        /// - <b>thumbprint=&lt;SHA1 hex&gt;</b>: Cerca per impronta digitale SHA1 esadecimale.
+        /// 
+        /// - <b>policyoid=&lt;OID&gt;</b>: Cerca per policy OID del certificato. Esempio: <c>2.16.840.1.101.2.1.11.39</c>
+        /// 
+        /// - <b>o=&lt;organizzazione&gt;</b>: Cerca per Organization (O).
+        /// - <b>c=&lt;paese&gt;</b>: Cerca per Country (C).
+        /// - <b>l=&lt;località&gt;</b>: Cerca per Locality (L).
+        /// - <b>ou=&lt;unità organizzativa&gt;</b>: Cerca per Organizational Unit (OU).
+        /// - <b>st=&lt;stato/regione&gt;</b>: Cerca per State/Province (ST).
+        /// - <b>e=&lt;email&gt;</b>: Cerca per Email (E).
+        /// 
+        /// - <b>[Solo Windows]</b>: È possibile specificare anche il nome di un CSP (Cryptographic Service Provider),
+        ///   ad esempio <c>YubiHSM Key Storage Provider</c>. Questa modalità è mantenuta per retrocompatibilità:
+        ///   in passato Chilkat gestiva HSM, token USB e smart card su Windows solo tramite CSP.
+        ///   Oggi Chilkat supporta HSM multipiattaforma (Windows, Linux, macOS, iOS, Alpine Linux),
+        ///   usando metodi come PKCS11, macOS Keychain, Windows ScMinidriver, MsCNG e CryptoAPI legacy.
+        ///   Il provider viene rilevato automaticamente e viene scelto il metodo ottimale.
+        /// 
+        /// Alcuni esempi di CSP validi:
+        /// - Microsoft Smart Card Key Storage Provider
+        /// - Microsoft Base Smart Card Crypto Provider
+        /// - Bit4id Universal Middleware Provider
+        /// - YubiHSM Key Storage Provider (da v9.5.0.83)
+        /// - SafeSign Standard Cryptographic Service Provider
+        /// - eToken Base Cryptographic Provider
+        /// - cryptoCertum3 CSP
+        /// - FTSafe ePass1000 RSA Cryptographic Service Provider
+        /// - SecureStoreCSP
+        /// - Gemalto Classic Card CSP
+        /// - EnterSafe ePass2003 CSP v1.0 / v2.0
+        /// - PROXKey CSP India V1.0 / V2.0
+        /// - TRUST KEY CSP V1.0
+        /// - Watchdata Brazil CSP V1.0
+        /// - Luna Cryptographic Services for Microsoft Windows
+        /// - Safenet RSA Full Cryptographic Provider
+        /// - nCipher Enhanced Cryptographic Provider
+        /// - MySmartLogon NFC CSP
+        /// - ActivClient Cryptographic Service Provider
+        /// - Athena ASECard Crypto CSP
+        /// - e molti altri...
+        /// </param>
         /// <param name="pin">pin smartcard/usb (opzionale). Se non fornito comparirà una finestra di dialogo del sistema operativo Windows per indicare il pin</param>
-        /// <param name="csp">provider csp (opzionale). Se non indicato verrà selezionato automaticamente. Utilizzare questo parametro per indicarne uno specifico. Utilizzare il metodo CSPs per visualizza i csp presenti nel sistema</param>
         /// <param name="formatoFirma">formato di firma digitale da generare. Per tutti i tipi di file utilizza il formato CAdES mentre per i file xml è possibile utilizzare anche il formato XAdES</param>
         /// <returns>firma avvenuta con successo</returns>
-        public static bool Firma(string SubjectCN, string pathFile, ref string lastError, string pin = null, string csp = null, FormatiFirma formatoFirma = FormatiFirma.CAdES)
+        public static bool Firma(string pathFile, ref string lastError, string certSpec = "", string pin = null, FormatiFirma formatoFirma = FormatiFirma.CAdES)
         {
             bool success = false;
             try
@@ -206,25 +229,6 @@ namespace FatturazioneElettronica.Extensions
                 //  Utilizza il certificato su una smartcard o su USB.
                 Cert cert = new Cert();
 
-                // cryptographic service provider
-                if (!string.IsNullOrWhiteSpace(csp))
-                {
-                    success = cert.LoadFromSmartcard(csp);
-                    if (success != true)
-                    {
-                        lastError = cert.LastErrorText;
-                        return success;
-                    }
-                }
-
-                //  Passa il Subject CN del certificato al metodo LoadByCommonName.
-                success = cert.LoadByCommonName(SubjectCN);
-                if (success != true)
-                {
-                    lastError = cert.LastErrorText;
-                    return success;
-                }
-
                 //  Fornire il PIN della smartcard.
                 //  Se il pin non è fornito esplicitamente qui,
                 //  Se non fornito dovrebbe comparire una finestra di dialogo del sistema operativo Windows per indicare il pin
@@ -233,6 +237,13 @@ namespace FatturazioneElettronica.Extensions
                     cert.SmartCardPin = pin;
                 }
 
+                success = cert.LoadFromSmartcard(certSpec);
+                if (success != true)
+                {
+                    lastError = cert.LastErrorText;
+                    return success;
+                }
+                
                 if (formatoFirma == FormatiFirma.CAdES)
                 {
                     Crypt2 crypt = new Crypt2();
@@ -247,6 +258,7 @@ namespace FatturazioneElettronica.Extensions
 
                     //  Indica l'algoritmo da utilizzare
                     crypt.HashAlgorithm = "sha256";
+                    crypt.CadesEnabled = true;
 
                     //  Specifico gli attributi firmati per essere inclusi.
                     //  (Questo è quello che fa un CAdES-BES compliant.)
@@ -287,11 +299,13 @@ namespace FatturazioneElettronica.Extensions
                     gen.SignedInfoCanonAlg = "C14N";
                     gen.SignedInfoDigestMethod = "sha256";
 
-                    
+
                     // Nota: Chilkat automaticamente compilerà il testo "TO BE GENERATED BY CHILKAT" con i valori corretti quando l'xml verrà firmato
-                    
-                    Xml object1 = new Xml();
-                    object1.Tag = "xades:QualifyingProperties";
+
+                    Xml object1 = new Xml
+                    {
+                        Tag = "xades:QualifyingProperties"
+                    };
                     object1.AddAttribute("xmlns:xades", "http://uri.etsi.org/01903/v1.3.2#");
                     object1.AddAttribute("xmlns:xades141", "http://uri.etsi.org/01903/v1.4.1#");
                     object1.AddAttribute("Target", $"#{id}");
@@ -639,9 +653,11 @@ namespace FatturazioneElettronica.Extensions
                     return success;
                 }
 
-                Crypt2 crypt = new Crypt2();
-                crypt.HashAlgorithm = "sha256";
-                crypt.EncodingMode = "base64";
+                Crypt2 crypt = new Crypt2
+                {
+                    HashAlgorithm = "sha256",
+                    EncodingMode = "base64"
+                };
 
                 string base64Hash = crypt.HashFileENC(pathFileSign);
 
@@ -815,8 +831,10 @@ namespace FatturazioneElettronica.Extensions
 
                 // Costruisco il TimeStampData.  
                 // Lo costruisco in XML e poi lo converto in ASN.1
-                Xml xml = new Xml();
-                xml.Tag = "sequence";
+                Xml xml = new Xml
+                {
+                    Tag = "sequence"
+                };
                 xml.UpdateChildContent("oid", "1.2.840.113549.1.9.16.1.31");
                 xml.UpdateAttrAt("contextSpecific", true, "tag", "0");
                 xml.UpdateAttrAt("contextSpecific", true, "constructed", "1");
