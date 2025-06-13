@@ -383,7 +383,7 @@ Esempio per generare un indice del pacchetto di versamento delle fatture elettro
                 Console.WriteLine("Operazione eseguita con successo!");
 
                 // firma indicePacchettoDiVersamento da smartcard/usb
-                //Utilities.Firma("mySubjectCM", indicePacchettoDiVersamento, ref lastError, "00000");
+                //Utilities.Firma(indicePacchettoDiVersamento, ref lastError, "cn=Marco Rossi", "12345 (pin opzionale)");
 
                 // marca indicePacchettoDiVersamento
                 //Utilities.MarcaTemporale(indicePacchettoDiVersamento + $".{extensionFileSigned}", "https://myurltsr", out string indicePacchettoDiVersamentoSignedMarked, ref lastError, "myuser","mypwd");
