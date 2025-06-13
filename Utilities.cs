@@ -8,18 +8,16 @@ namespace FatturazioneElettronica.Extensions
 {
     using Chilkat;
     using System;
-    using System.Collections.Generic;
     using System.Globalization;
     using System.IO;
     using System.Linq;
-    using System.Security.Policy;
 
     /// <summary>
     /// utilities per la fatturazione elettronica e la conservazione sostitutiva
     /// la libreria utilizzata la libreria chilkat http://www.chilkatsoft.com/
     /// Per utilizzarla in modalita trial (30gg) passare una stringa qualsiasi per il parametro unlock del metodo UnlockLicense
     /// </summary>
-    public static class Utilities
+    public static partial class Utilities
     {
         private static Global glob;
 

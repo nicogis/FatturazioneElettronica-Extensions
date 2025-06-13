@@ -51,6 +51,7 @@
     <Compile Include="FormatiFirma.cs" />
     <Compile Include="Utilities.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UtilitiesAruba.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitattributes" />
